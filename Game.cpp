@@ -100,3 +100,31 @@ void Game::Cleanup() {
     for(size_t i = 0; i < effects.size(); ) { if(!effects[i].isActive()) effects.erase(effects.begin() + i); else i++; }
 }
 
+void Game::Draw() {
+    BeginDrawing();
+    ClearBackground(BLACK);
+
+    if (useTextures) {
+        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, bgY1, 800, 600}, {0,0}, 0, WHITE);
+        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)-bg.height}, {0, bgY2, 800, 600}, {0,0}, 0, WHITE);
+    }
+
+    if (state == START) {
+        DrawTextEx(titleFont, "STELLAR DEFENDER", {150, 240}, 60, 2, SKYBLUE);
+    } else if (state == PLAY) {
+        player.Draw(useTextures);
+        for(size_t i = 0; i < bullets.size(); i++) bullets[i].Draw(useTextures);
+        for(size_t i = 0; i < meteors.size(); i++) meteors[i].Draw(useTextures);
+        for(size_t i = 0; i < effects.size(); i++) effects[i].Draw(useTextures);
+        
+        DrawTextEx(scoreFont, TextFormat("SCORE: %d", scores.getScore()), {20, 555}, 30, 2, YELLOW);
+        for(int i = 0; i < player.getLives(); i++) {
+            if (useTextures) DrawTexture(heartTex, 650 + (i * 40), 555, WHITE);
+            else DrawCircle(650 + (i * 40), 570, 10, RED);
+        }
+    } else {
+        DrawTextEx(titleFont, "MISSION FAILED", {200, 240}, 60, 2, RED);
+    }
+    EndDrawing();
+}
+
