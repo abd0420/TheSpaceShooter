@@ -4,9 +4,9 @@
         {
             "label": "Build Raylib (GCC)",
             "type": "shell",
-            "command": "C:/msys64/mingw64/bin/gcc.exe",
+            "command": "C:/msys64/mingw64/bin/g++.exe",
             "args": [
-                "${file}",
+                "${workspaceFolder}\\*.cpp",
 
                 "-IC:/msys64/mingw64/include",
                 "-LC:/msys64/mingw64/lib",
@@ -22,7 +22,7 @@
                 "-lshell32",
 
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}.exe"
+                "${workspaceFolder}\\main.exe"
             ],
             "options": {
                 "cwd": "${fileDirname}"
