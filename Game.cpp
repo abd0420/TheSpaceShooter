@@ -5,22 +5,22 @@ float Meteor::baseSpeed = 10.5f;
 Game::Game() : state(START), frames(0), useTextures(true) { // SET TO FALSE TO SHOW BASE RECTANGLES
     // Resource loading section
     target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
-    bg = LoadTexture("pixelart_starfield.png");
-    shipTex = LoadTexture("player.png");
-    meteorTex = LoadTexture("debris - 3.png"); 
-    heartTex = LoadTexture("heart_32x32.png"); 
+    bg = LoadTexture("assets/pixelart_starfield.png");
+    shipTex = LoadTexture("assets/player.png");
+    meteorTex = LoadTexture("assets/debris - 3.png"); 
+    heartTex = LoadTexture("assets/heart_32x32.png"); 
     
-    titleFont = LoadFontEx("madspixel.ttf", 64, 0, 250); 
-    scoreFont = LoadFontEx("PixelStorm.ttf", 64, 0, 250); 
+    titleFont = LoadFontEx("assets/Chonkly.otf", 64, 0, 250); 
+    scoreFont = LoadFontEx("assets/PixelStorm.ttf", 64, 0, 250); 
     
     player.setTexture(shipTex);
     bgY1 = 0.0f; bgY2 = -600.0f;
 
-    music = LoadMusicStream("16_bit_space.ogg");
-    laser = LoadSound("laser.ogg");
-    boom = LoadSound("SE-Explosion3-F.ogg"); 
-    shipHit = LoadSound("SE-Explosion3-B.ogg");
-    gameOverSound = LoadSound("endscreen_exp.ogg"); 
+    music = LoadMusicStream("assets/16_bit_space.ogg");
+    laser = LoadSound("assets/laser.ogg");
+    boom = LoadSound("assets/SE-Explosion3-F.ogg"); 
+    shipHit = LoadSound("assets/SE-Explosion3-B.ogg");
+    gameOverSound = LoadSound("assets/endscreen_exp.ogg"); 
     
     PlayMusicStream(music);
 }
@@ -37,7 +37,7 @@ void Game::Update() {
     UpdateMusicStream(music); 
     
     if (state != OVER) {
-        float scrollSpeed = 10.0f; 
+        float scrollSpeed = 13.0f; 
         bgY1 += scrollSpeed; bgY2 += scrollSpeed;
         if (bgY1 >= 600) bgY1 = bgY2 - 600;
         if (bgY2 >= 600) bgY2 = bgY1 - 600;
@@ -113,8 +113,9 @@ void Game::Draw() {
     }
 
     if (state == START) {
-        DrawCenteredText(titleFont, "STELLAR DEFENDER", SCREEN_HEIGHT/2 - 60, 60, SKYBLUE);
-        DrawCenteredText(titleFont, "Press ENTER to Start", SCREEN_HEIGHT/2 + 30, 30, LIGHTGRAY);
+        
+        DrawCenteredText(titleFont, "TheSpaceShooter", SCREEN_HEIGHT/2 - 60, 65, RED);
+        DrawCenteredText(titleFont, "\n\n\n\nPress ENTER to Start", SCREEN_HEIGHT/2 + 30, 25, BLACK);
     } else if (state == PLAY) {
         player.Draw(useTextures);
         for(size_t i = 0; i < bullets.size(); i++) bullets[i].Draw(useTextures);
@@ -127,9 +128,9 @@ void Game::Draw() {
             else DrawCircle(650 + (i * 40), 570, 10, RED);
         }
     } else {
-        DrawCenteredText(titleFont, "MISSION FAILED", SCREEN_HEIGHT/2 - 60, 60, RED);
-        DrawCenteredText(titleFont, TextFormat("HIGH SCORE: %d", scores.getHighScore()), SCREEN_HEIGHT/2 + 20, 30, YELLOW);
-        DrawCenteredText(titleFont, "ENTER to Retry", SCREEN_HEIGHT/2 + 70, 30, GRAY);
+        DrawCenteredText(titleFont, "MISSION FAILED!", SCREEN_HEIGHT/2 - 60, 60, RED);
+        DrawCenteredText(scoreFont, TextFormat("HIGH SCORE: %d", scores.getHighScore()), SCREEN_HEIGHT/2 + 20, 30, RED);
+        DrawCenteredText(scoreFont, "\n\n\n\nPress ENTER to Retry", SCREEN_HEIGHT/2 + 70, 25, BLACK);
     }
     EndTextureMode(); 
 
@@ -147,8 +148,24 @@ void Game::Draw() {
 }
 
 void Game::DrawCenteredText(Font fontToUse, const char* text, float y, float fontSize, Color color) {
+
     Vector2 size = MeasureTextEx(fontToUse, text, fontSize, 2);
-    DrawTextEx(fontToUse, text, { (SCREEN_WIDTH / 2.0f) - (size.x / 2.0f), y }, fontSize, 2, color);
+    Vector2 pos = { (SCREEN_WIDTH / 2.0f) - (size.x / 2.0f), y };
+    
+    DrawTextEx(fontToUse, text, { pos.x - 4, pos.y }, fontSize, 2, BLACK);
+    DrawTextEx(fontToUse, text, { pos.x + 4, pos.y }, fontSize, 2, BLACK);
+    DrawTextEx(fontToUse, text, { pos.x, pos.y - 4 }, fontSize, 2, BLACK);
+    DrawTextEx(fontToUse, text, { pos.x, pos.y + 4 }, fontSize, 2, BLACK);
+    
+    DrawTextEx(fontToUse, text, { pos.x + 4, pos.y + 4 }, fontSize, 2, BLACK);
+    DrawTextEx(fontToUse, text, { pos.x + 6, pos.y + 6 }, fontSize, 2, BLACK);
+    DrawTextEx(fontToUse, text, { pos.x + 8, pos.y + 8 }, fontSize, 2, BLACK);
+    DrawTextEx(fontToUse, text, { pos.x + 10, pos.y + 10 }, fontSize, 2, BLACK);
+
+    DrawTextEx(fontToUse, text, pos, fontSize, 2, color);
+
+    
+    DrawTextEx(fontToUse, text, { pos.x, pos.y - 4 }, fontSize, 2, YELLOW); 
 }
 
 

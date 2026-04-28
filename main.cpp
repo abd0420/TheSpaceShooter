@@ -13,7 +13,7 @@ int main() {
             game.Update();
             game.Draw();
         }
-    }s
+    }
 
     CloseAudioDevice();
     CloseWindow();
