@@ -11,6 +11,7 @@ class Game {
 private:
     bool useTextures; 
 
+    RenderTexture2D target;
     Texture2D bg, shipTex, meteorTex, heartTex;
     Font titleFont, scoreFont; 
     Music music;
@@ -33,6 +34,7 @@ public:
     void Draw();
     void HandleCollisions();
     void Cleanup();
+    void DrawCenteredText(Font fontToUse, const char* text, float y, float fontSize, Color color);
 };
 
 #endif

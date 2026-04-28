@@ -3,7 +3,7 @@
 // i hope this works :PP
 
 int main() {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "TheSpaceShooter");
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "TheSpaceShooter");
     InitAudioDevice();
     SetTargetFPS(60);
     
@@ -13,7 +13,7 @@ int main() {
             game.Update();
             game.Draw();
         }
-    }
+    }s
 
     CloseAudioDevice();
     CloseWindow();

@@ -4,6 +4,7 @@ float Meteor::baseSpeed = 10.5f;
 
 Game::Game() : state(START), frames(0), useTextures(true) { // SET TO FALSE TO SHOW BASE RECTANGLES
     // Resource loading section
+    target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
     bg = LoadTexture("pixelart_starfield.png");
     shipTex = LoadTexture("player.png");
     meteorTex = LoadTexture("debris - 3.png"); 
@@ -25,6 +26,7 @@ Game::Game() : state(START), frames(0), useTextures(true) { // SET TO FALSE TO S
 }
 
 Game::~Game() {
+    UnloadRenderTexture(target);
     UnloadTexture(bg); UnloadTexture(shipTex); UnloadTexture(meteorTex); UnloadTexture(heartTex);
     UnloadFont(titleFont); UnloadFont(scoreFont);
     UnloadMusicStream(music); UnloadSound(laser); UnloadSound(boom);
@@ -101,16 +103,18 @@ void Game::Cleanup() {
 }
 
 void Game::Draw() {
-    BeginDrawing();
+    
+    BeginTextureMode(target);
     ClearBackground(BLACK);
 
     if (useTextures) {
-        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, bgY1, 800, 600}, {0,0}, 0, WHITE);
-        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)-bg.height}, {0, bgY2, 800, 600}, {0,0}, 0, WHITE);
+        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, bgY1, SCREEN_WIDTH, SCREEN_HEIGHT}, {0,0}, 0, WHITE);
+        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)-bg.height}, {0, bgY2, SCREEN_WIDTH, SCREEN_HEIGHT}, {0,0}, 0, WHITE);
     }
 
     if (state == START) {
-        DrawTextEx(titleFont, "STELLAR DEFENDER", {150, 240}, 60, 2, SKYBLUE);
+        DrawCenteredText(titleFont, "STELLAR DEFENDER", SCREEN_HEIGHT/2 - 60, 60, SKYBLUE);
+        DrawCenteredText(titleFont, "Press ENTER to Start", SCREEN_HEIGHT/2 + 30, 30, LIGHTGRAY);
     } else if (state == PLAY) {
         player.Draw(useTextures);
         for(size_t i = 0; i < bullets.size(); i++) bullets[i].Draw(useTextures);
@@ -123,8 +127,28 @@ void Game::Draw() {
             else DrawCircle(650 + (i * 40), 570, 10, RED);
         }
     } else {
-        DrawTextEx(titleFont, "MISSION FAILED", {200, 240}, 60, 2, RED);
+        DrawCenteredText(titleFont, "MISSION FAILED", SCREEN_HEIGHT/2 - 60, 60, RED);
+        DrawCenteredText(titleFont, TextFormat("HIGH SCORE: %d", scores.getHighScore()), SCREEN_HEIGHT/2 + 20, 30, YELLOW);
+        DrawCenteredText(titleFont, "ENTER to Retry", SCREEN_HEIGHT/2 + 70, 30, GRAY);
     }
+    EndTextureMode(); 
+
+    
+    BeginDrawing();
+    ClearBackground(BLACK); 
+
+    // Math to center the 800x600 canvas inside the 1280x720 window
+    Rectangle sourceRect = { 0.0f, 0.0f, (float)target.texture.width, (float)-target.texture.height }; 
+    Rectangle destRect = { (WINDOW_WIDTH - SCREEN_WIDTH) / 2.0f, (WINDOW_HEIGHT - SCREEN_HEIGHT) / 2.0f, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT };
+    
+    DrawTexturePro(target.texture, sourceRect, destRect, {0, 0}, 0.0f, WHITE);
+    
     EndDrawing();
 }
+
+void Game::DrawCenteredText(Font fontToUse, const char* text, float y, float fontSize, Color color) {
+    Vector2 size = MeasureTextEx(fontToUse, text, fontSize, 2);
+    DrawTextEx(fontToUse, text, { (SCREEN_WIDTH / 2.0f) - (size.x / 2.0f), y }, fontSize, 2, color);
+}
+
 
