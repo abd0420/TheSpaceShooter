@@ -13,7 +13,7 @@ private:
     float scale;
 public:
     Spaceship() : GameObject(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 80.0f), 
-                  lives(3), speed(10.6f), scale(1.2f) {} 
+                  lives(3), speed(14.2f), scale(1.2f) {} 
                   
     void setTexture(Texture2D tex) { texture = tex; }
     
@@ -26,12 +26,12 @@ public:
         if (useTextures) {
             DrawTextureEx(texture, Vector2{x - (texture.width * scale) / 2, y - (texture.height * scale) / 2}, 0.0f, scale, WHITE);
         } else {
-            // "Normal" rectangle version for the baseline logic demo
+            // Normal rectangle version for the baseline logic demo
             DrawRectangle(x - 20, y - 20, 40, 40, BLUE);
         }
     }
     
-    Rectangle getRect() const { 
+    Rectangle getRect() const { //hitbox
         float hbW = (texture.width * scale) * 0.45f;
         float hbH = (texture.height * scale) * 0.50f;
         return { x - hbW / 2.0f, y - hbH / 2.0f, hbW, hbH }; 

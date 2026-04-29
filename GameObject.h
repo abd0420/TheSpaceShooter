@@ -13,11 +13,9 @@ public:
     GameObject(float startX, float startY) : x(startX), y(startY), active(true) {}
     virtual ~GameObject() {} 
 
-    // Pure virtual - every child class must have these or the code won't compile
     virtual void Update() = 0; 
     virtual void Draw(bool useTextures) const = 0; 
 
-    // Standard getters/setters for encapsulation
     void setInactive() { active = false; }
     bool isActive() const { return active; }
     float getX() const { return x; }

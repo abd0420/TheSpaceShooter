@@ -36,7 +36,7 @@ Game::~Game() {
 void Game::Update() {
     UpdateMusicStream(music); 
     
-    if (state != OVER) {
+    if (state != OVER) { //to stop bg scrolling
         float scrollSpeed = 13.0f; 
         bgY1 += scrollSpeed; bgY2 += scrollSpeed;
         if (bgY1 >= 600) bgY1 = bgY2 - 600;
@@ -44,18 +44,23 @@ void Game::Update() {
     }
 
     if (state == START && IsKeyPressed(KEY_ENTER)) state = PLAY;
-    else if (state == OVER && IsKeyPressed(KEY_ENTER)) {
-        state = PLAY; meteors.clear(); bullets.clear(); effects.clear(); player.reset(); 
-        Meteor::resetDifficulty(); PlayMusicStream(music);
+    else if (state == OVER && IsKeyPressed(KEY_ENTER)) { //restart game
+        state = PLAY; 
+        meteors.clear(); 
+        bullets.clear(); 
+        effects.clear(); 
+        player.reset(); 
+        Meteor::resetDifficulty(); 
+        PlayMusicStream(music);
     }
-    else if (state == PLAY) {
+    else if (state == PLAY) { //bullet firing
         player.Update();
         if (IsKeyPressed(KEY_SPACE)) {
             bullets.push_back(Bullet(player.getX(), player.getY() - 30));
             PlaySound(laser);
         }
 
-        if (++frames >= 27) { 
+        if (++frames >= 27) { //meteor spawn and difficulty
             meteors.push_back(Meteor(GetRandomValue(30, 770), -60, (float)GetRandomValue(8, 14)/10.0f, meteorTex));
             frames = 0;
             if (scores.getScore() > 0 && scores.getScore() % 200 == 0) Meteor::increaseDifficulty();
@@ -80,17 +85,23 @@ void Game::HandleCollisions() {
             effects.push_back(Explosion(meteors[m].getX(), meteors[m].getY()));
             player.loseLife();
             if (player.getLives() <= 0) { 
-                state = OVER; scores.finalize(); StopMusicStream(music); PlaySound(gameOverSound); 
+                state = OVER; 
+                scores.finalize(); 
+                StopMusicStream(music); 
+                PlaySound(gameOverSound); 
             }
             continue;
         }
         
         for(size_t b = 0; b < bullets.size(); b++) {
             if (bullets[b].isActive() && CheckCollisionRecs(bullets[b].getRect(), meteors[m].getRect())) {
-                bullets[b].setInactive(); meteors[m].setInactive(); 
+                
+                bullets[b].setInactive(); 
+                meteors[m].setInactive(); 
                 PlaySound(boom); 
                 effects.push_back(Explosion(meteors[m].getX(), meteors[m].getY()));
-                ++scores; break; 
+                ++scores; 
+                break; 
             }
         }
     }
